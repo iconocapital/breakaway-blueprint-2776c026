@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { questions } from "@/data/questions";
@@ -66,15 +67,25 @@ const LeadCapture = () => {
     // Store lead info for results page
     sessionStorage.setItem("bb_lead", JSON.stringify(form));
 
-    // Log to console for now (email integration to be added via edge function)
-    console.log("Lead submission:", {
-      ...form,
-      score: `${totalPct}/100`,
-      tier: tier.tier,
-      summary: buildSummary(),
-    });
+    // Send email notification via edge function
+    try {
+      const { error } = await supabase.functions.invoke("send-lead-notification", {
+        body: {
+          name: form.name,
+          email: form.email,
+          phone: form.phone || "—",
+          firm: form.firm || "—",
+          score: `${totalPct}/100`,
+          tier: tier.tier,
+          answers: buildSummary(),
+        },
+      });
+      if (error) console.error("Email notification error:", error);
+    } catch (e) {
+      console.error("Failed to send notification:", e);
+    }
 
-    // Navigate to results
+    // Navigate to results regardless of email success
     navigate("/results");
     setSubmitting(false);
   };
