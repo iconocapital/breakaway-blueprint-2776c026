@@ -1,11 +1,17 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Lock, BarChart3, FileDown, TrendingUp } from "lucide-react";
+import { Input } from "@/components/ui/input";
+
+const ADMIN_PASSWORD = "minitank";
 
 const Payment = () => {
   const navigate = useNavigate();
+  const [adminPass, setAdminPass] = useState("");
+  const [showAdmin, setShowAdmin] = useState(false);
+  const [adminError, setAdminError] = useState(false);
 
-  // Check if assessment was completed
   const hasAnswers = !!sessionStorage.getItem("bb_answers");
 
   if (!hasAnswers) {
@@ -13,10 +19,16 @@ const Payment = () => {
     return null;
   }
 
-  // For now, skip payment and go directly to lead capture
-  // Stripe integration will be added later
   const handlePayment = () => {
     navigate("/capture");
+  };
+
+  const handleAdminBypass = () => {
+    if (adminPass === ADMIN_PASSWORD) {
+      navigate("/capture");
+    } else {
+      setAdminError(true);
+    }
   };
 
   return (
@@ -76,9 +88,34 @@ const Payment = () => {
             </button>
           </div>
 
-          <p className="text-center text-xs text-muted-foreground/60">
-            Secure payment powered by Stripe. Your data is encrypted and never shared.
-          </p>
+          {/* Admin bypass */}
+          <div className="mt-8 text-center">
+            {!showAdmin ? (
+              <button
+                onClick={() => setShowAdmin(true)}
+                className="text-xs text-muted-foreground/40 hover:text-muted-foreground transition-colors"
+              >
+                Admin access
+              </button>
+            ) : (
+              <div className="flex gap-2 max-w-xs mx-auto">
+                <Input
+                  type="password"
+                  placeholder="Admin password"
+                  value={adminPass}
+                  onChange={(e) => { setAdminPass(e.target.value); setAdminError(false); }}
+                  onKeyDown={(e) => e.key === "Enter" && handleAdminBypass()}
+                  className={`text-sm ${adminError ? "border-destructive" : ""}`}
+                />
+                <button
+                  onClick={handleAdminBypass}
+                  className="px-4 py-2 rounded-lg bg-secondary text-secondary-foreground text-sm font-medium hover:bg-secondary/80 transition-colors"
+                >
+                  Go
+                </button>
+              </div>
+            )}
+          </div>
         </motion.div>
       </main>
     </div>
