@@ -13,6 +13,10 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        body: ['Outfit', 'sans-serif'],
+        display: ['Newsreader', 'Georgia', 'serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -56,6 +60,16 @@ export default {
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
+        },
+        score: {
+          green: "hsl(var(--score-green))",
+          "green-bg": "hsl(var(--score-green-bg))",
+          yellow: "hsl(var(--score-yellow))",
+          "yellow-bg": "hsl(var(--score-yellow-bg))",
+          orange: "hsl(var(--score-orange))",
+          "orange-bg": "hsl(var(--score-orange-bg))",
+          red: "hsl(var(--score-red))",
+          "red-bg": "hsl(var(--score-red-bg))",
         },
       },
       borderRadius: {
